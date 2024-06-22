@@ -32,9 +32,11 @@ public class DatalakeBuilder {
 
                         String directory = String.format("datalake/eventstore/%s/%s/%s.events",
                                 TOPIC_NAME, data.getSource(), getDateString(data.getTs()));
-                        Files.createDirectories(Paths.get(directory).getParent());
-                        try (FileWriter writer = new FileWriter(directory, true)) {
-                            writer.write(text + "\n");
+                        try {
+                            Files.createDirectories(Paths.get(directory).getParent());
+                            try (FileWriter writer = new FileWriter(directory, true)) {
+                                writer.write(text + "\n");
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
