@@ -35,7 +35,7 @@ public class WeatherApp {
                     for (int i = 0; i < ISLANDS.length; i++) {
                         try {
                             JSONObject weatherData = weatherAPI.getWeatherData(ISLAND_COORDINATES[i][0], ISLAND_COORDINATES[i][1]);
-                            String date = "2024-06-12"; // Usa la lógica real para la fecha
+                            String date = "2024-06-22"; // Usa la lógica real para la fecha
                             double temperature = weatherData.getJSONObject("main").getDouble("temp");
                             double precipitation = weatherData.has("precipitation") ? weatherData.getJSONArray("weather").getJSONObject(0).getDouble("precipitation") : 0.0;
                             double humidity = weatherData.getJSONObject("main").getDouble("humidity");
