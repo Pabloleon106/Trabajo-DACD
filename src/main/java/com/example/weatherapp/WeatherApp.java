@@ -3,6 +3,7 @@ package com.example.weatherapp;
 import org.json.JSONObject;
 
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -35,14 +36,20 @@ public class WeatherApp {
                     for (int i = 0; i < ISLANDS.length; i++) {
                         try {
                             JSONObject weatherData = weatherAPI.getWeatherData(ISLAND_COORDINATES[i][0], ISLAND_COORDINATES[i][1]);
-                            String date = "2024-06-22"; // Usa la lógica real para la fecha
+                            long ts = System.currentTimeMillis();
+                            long predictionTime = weatherData.getLong("dt") * 1000; // Convertir a milisegundos
                             double temperature = weatherData.getJSONObject("main").getDouble("temp");
-                            double precipitation = weatherData.has("precipitation") ? weatherData.getJSONArray("weather").getJSONObject(0).getDouble("precipitation") : 0.0;
+                            double precipitation = weatherData.has("precipitation") ? weatherData.getJSONObject("precipitation").getDouble("1h") : 0.0;
                             double humidity = weatherData.getJSONObject("main").getDouble("humidity");
                             double clouds = weatherData.getJSONObject("clouds").getDouble("all");
                             double windSpeed = weatherData.getJSONObject("wind").getDouble("speed");
 
-                            dbManager.insertData(ISLANDS[i], date, temperature, precipitation, humidity, clouds, windSpeed);
+                            Location location = new Location(ISLAND_COORDINATES[i][0], ISLAND_COORDINATES[i][1]);
+                            Weather weather = new Weather(ts, "prediction-provider", predictionTime, location, temperature, precipitation, humidity, clouds, windSpeed);
+
+                            WeatherPublisher.sendWeatherData(weather);
+
+                            dbManager.insertData(ISLANDS[i], Long.toString(ts), temperature, precipitation, humidity, clouds, windSpeed);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -55,4 +62,3 @@ public class WeatherApp {
         }
     }
 }
-
